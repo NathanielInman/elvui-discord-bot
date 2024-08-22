@@ -2,10 +2,11 @@ require('dotenv').config();
 const { Client, GatewayIntentBits, Collection } = require('discord.js');
 const express = require('express');
 const app = express();
+const https = require('https');
 const bot = new Client({ intents: [GatewayIntentBits.Guilds]});
 const channelName = 'elvui-discord-bot-dev';
 
-let version = '13.74';
+let version = '13.73';
 let changedocRequest, changedocResponse;
 
 bot.on('ready', async (client) => {
@@ -22,7 +23,7 @@ async function checkNewVersion(client) {
     if (version !== changedocResponse.version) {
       console.log(`A new version is available "${version}"`)
       version = changedocResponse.version;
-      getNewVersion();
+      getNewVersion(client);
     } else {
       console.log('No updates, holding for 6 hours.');
     }
@@ -37,7 +38,7 @@ async function getNewVersion(client) {
     const changelogRequest = await fetch('https://api.tukui.org/v1/changelog/elvui');
     const changelogResponse = await changelogRequest.text();
     const [,lastVersionChanges] = changelogResponse.split('###');
-    const changelog = `### ElvUI ${lastVersionChanges.trim()}\n[Download](${changedocResponse.url})`;
+    const changelog = `### ElvUI ${lastVersionChanges.trim()}\n[Download](http://159.203.80.149:8080)`;
 
     console.log(`Posting new version to channel "${channelName}"`)
     channel.send(changelog);
@@ -53,7 +54,12 @@ app.get('/', async (req, res) => {
     const payload = await fetch('https://api.tukui.org/v1/addon/elvui');
     const data = await payload.json();
 
-    res.redirect(data.url);
+    console.log(`redirecting to: "${data.url}"`);
+	  const externalRequest = https.request(data.url, externalResponse => {
+		  res.setHeader('content-disposition', `attachment; filename=elvui-${version}.zip`);
+		  externalResponse.pipe(res);
+	  });
+	  externalRequest.end();
   } catch (err) {
     console.log(err);
   }
