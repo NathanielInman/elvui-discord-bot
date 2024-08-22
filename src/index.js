@@ -49,17 +49,20 @@ async function getNewVersion(client) {
 
 bot.login(process.env.TOKEN);
 
+// this downloads the new file asset and pipes it to the user.
+// You can't just redirect to the asset url because the Tukui server recognizes
+// within the hash of the download url what the originating IP was
 app.get('/download', async (req, res) => {
   try {
     const payload = await fetch('https://api.tukui.org/v1/addon/elvui');
     const data = await payload.json();
 
     console.log(`redirecting to: "${data.url}"`);
-	  const externalRequest = https.request(data.url, externalResponse => {
-		  res.setHeader('content-disposition', `attachment; filename=elvui-${version}.zip`);
-		  externalResponse.pipe(res);
-	  });
-	  externalRequest.end();
+    const externalRequest = https.request(data.url, externalResponse => {
+      res.setHeader('content-disposition', `attachment; filename=elvui-${version}.zip`);
+      externalResponse.pipe(res);
+    });
+    externalRequest.end();
   } catch (err) {
     console.log(err);
   }
