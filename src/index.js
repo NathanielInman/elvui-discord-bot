@@ -6,7 +6,7 @@ const https = require('https');
 const bot = new Client({ intents: [GatewayIntentBits.Guilds]});
 const channelName = 'elvui-discord-bot-dev';
 
-let version = '13.73';
+let version = '13.74';
 let changedocRequest, changedocResponse;
 
 bot.on('ready', async (client) => {
@@ -38,7 +38,7 @@ async function getNewVersion(client) {
     const changelogRequest = await fetch('https://api.tukui.org/v1/changelog/elvui');
     const changelogResponse = await changelogRequest.text();
     const [,lastVersionChanges] = changelogResponse.split('###');
-    const changelog = `### ElvUI ${lastVersionChanges.trim()}\n[Download](http://159.203.80.149:8080)`;
+    const changelog = `### ElvUI ${lastVersionChanges.trim()}\n[Download](http://159.203.80.149:8080/download)`;
 
     console.log(`Posting new version to channel "${channelName}"`)
     channel.send(changelog);
@@ -49,7 +49,7 @@ async function getNewVersion(client) {
 
 bot.login(process.env.TOKEN);
 
-app.get('/', async (req, res) => {
+app.get('/download', async (req, res) => {
   try {
     const payload = await fetch('https://api.tukui.org/v1/addon/elvui');
     const data = await payload.json();
