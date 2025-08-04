@@ -4,9 +4,9 @@ const express = require("express");
 const app = express();
 const https = require("https");
 const bot = new Client({ intents: [GatewayIntentBits.Guilds] });
-const channelName = "elvui-discord-bot-dev";
+const channelName = "addon-updates";
 
-let version = "13.73";
+let version = "13.77";
 let changedocRequest, changedocResponse;
 
 bot.on("ready", async (client) => {
@@ -44,7 +44,7 @@ async function getNewVersion(client) {
       lastVersionChanges.length < 1900
         ? lastVersionChanges
         : lastVersionChanges.slice(0, 1900);
-    const changelog = `### ElvUI ${limitedStringLength.trim()}\n[Download](http://159.203.80.149:8080)`;
+    const changelog = `### ElvUI ${limitedStringLength.trim()}\n[Download](https://theoestudio.com/elvui)`;
 
     console.log(`Posting new version to channel "${channelName}"`);
     channel.send(changelog);
@@ -55,10 +55,19 @@ async function getNewVersion(client) {
 
 bot.login(process.env.TOKEN);
 
+app.get("/", (req, res) => {
+  console.log("Root request, rerouting to nathanielinman.com...");
+  res.redirect("https://nathanielinman.com");
+});
+app.get("/status", (req, res) => {
+  console.log("Status request...");
+  res.send("Online");
+});
+
 // this downloads the new file asset and pipes it to the user.
 // You can't just redirect to the asset url because the Tukui server recognizes
 // within the hash of the download url what the originating IP was
-app.get("/", async (req, res) => {
+app.get("/elvui", async (req, res) => {
   try {
     const payload = await fetch("https://api.tukui.org/v1/addon/elvui");
     const data = await payload.json();
