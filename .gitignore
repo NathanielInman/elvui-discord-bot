@@ -1,5 +1,7 @@
 # project
 .env
+.dev.vars
 
 # node
 node_modules
+.wrangler/

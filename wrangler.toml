@@ -1,0 +1,17 @@
+name = "elvui-discord-bot"
+main = "src/worker.js"
+compatibility_date = "2024-01-01"
+
+routes = [
+  { pattern = "theoestudio.com/*", zone_name = "theoestudio.com" }
+]
+
+[triggers]
+crons = ["0 */6 * * *"]
+
+[[kv_namespaces]]
+binding = "ELVUI_STATE"
+id = "4edb7e12494f4215bd339ff1aa97d946"
+
+[vars]
+DOWNLOAD_URL = "https://theoestudio.com/elvui"
